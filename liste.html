@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BACON Extractor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+textarea, input[type=button] {
+  display: block;
+}
+textarea, input {
+  padding:1em;
+  margin:1em;
+}
+progress {
+  margin:1em;
+}
+main {
+  display: flex; 
+  align-items: flex-start;
+  flex-flow: column;
+}
+@media only screen and (min-width: 900px) {
+  main {
+    flex-flow: row;
+  }
+}
+    </style>
+    <link rel="stylesheet" href="../style.css" />
+    <script defer type="module" src="../menu.js#nomenu"></script>
+  </head>
+  <body>
+    <header><h1>BACON Extractor</h1></header>
+    <main>
+      <form>
+        <textarea placeholder="Saisir les identifiants recherchés (ISBN, ISSN)" rows="10"></textarea>
+        <select id="OE">
+          <option disabled>Contenus diffusé par OpenEdition</option>
+          <option value="neutral">Peu importe</option>
+          <option value="oe_first">En priorité</option>
+          <option value="oe_only">Uniquement</option>
+        </select>
+        <input id="validate" type="button" value="Valider">
+      </form>
+      <progress max="1" value="0"></progress>
+      <script type="module">
+import { baconIdToKbart } from "./bacon.js"
+const oe = [...document.querySelectorAll("option")]
+  .filter(e => (!e.disabled))
+  .map(e => e.value);
+function output(filename, data, type) {
+  var a = window.document.createElement('a');
+  a.setAttribute("target","_blank");
+  a.href = window.URL.createObjectURL(new Blob([data], {type: type}));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+document.querySelector("#validate").addEventListener("click", async (event) => {
+  event.target.setAttribute("disabled",true);
+  let userInput = document.querySelector("textarea").value;
+  let progress = document.querySelector("progress");
+  let openedition = oe.indexOf(document.querySelector("#OE").value);
+  userInput = userInput.split(/,|;|\n/);
+  progress.setAttribute("max",userInput.length);
+  let updateProgress = (value) => progress.setAttribute("value",value);
+  let kbart = await baconIdToKbart(userInput,updateProgress,openedition);
+  event.target.removeAttribute("disabled");
+  document.querySelector("textarea").value = "";
+  if (kbart.errors.length == progress.value) {
+    alert("Pas de résultat :(");
+  } else {
+    output(
+      "bacon_data.tsv",
+      kbart.kbart_lines.join("\n"),
+      "text/tab-separated-values");
+  }
+  if (kbart.errors.length > 0) {
+    let errors_log = (document.querySelector("pre")
+    || document.createElement("pre"));
+    kbart.errors = "Identifiants non trouvés:\n"+kbart.errors.join("\n");
+    errors_log.innerText = kbart.errors;
+    document.querySelector("main").append(errors_log);
+  }
+});
+      </script>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>
