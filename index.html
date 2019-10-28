@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BACON WebService Kbart Extractor</title>
+    <title>BACON Extractor</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -18,13 +18,19 @@ progress {
 main {
   display: flex; 
   align-items: flex-start;
+  flex-flow: column;
+}
+@media only screen and (min-width: 900px) {
+  main {
+    flex-flow: row;
+  }
 }
     </style>
     <link rel="stylesheet" href="../style.css" />
     <script defer type="module" src="../menu.js#nomenu"></script>
   </head>
   <body>
-    <header><h1>BACON WebService Kbart Extractor</h1></header>
+    <header><h1>BACON Extractor</h1></header>
     <main>
       <form>
         <textarea placeholder="Saisir les identifiants recherchés (ISBN, ISSN)" rows="10" cols="30"></textarea>
