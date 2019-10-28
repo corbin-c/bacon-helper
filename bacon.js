@@ -1,6 +1,7 @@
 const ID2KBART = "https://bacon.abes.fr/id2kbart/";
 const PKG2KBART = "https://bacon.abes.fr/package2kbart/";
 const KBART_HEAD = '"publication_title"	"print_identifier"	"online_identifier"	"date_first_issue_online"	"num_first_vol_online"	"num_first_issue_online"	"date_last_issue_online"	"num_last_vol_online"	"num_last_issue_online"	"title_url"	"first_author"	"title_id"	"embargo_info"	"coverage_depth"	"notes"	"publisher_name"	"publication_type"	"date_monograph_published_print"	"date_monograph_published_online"	"monograph_volume"	"monograph_edition"	"first_editor"	"parent_publication_title_id"	"preceding_publication_title_id"	"access_type"';
+
 function output(filename, data, type) {
   var a = window.document.createElement('a');
   a.setAttribute("target","_blank");
@@ -10,6 +11,7 @@ function output(filename, data, type) {
   a.click();
   document.body.removeChild(a);
 }
+
 document.querySelector("#validate").addEventListener("click", async (event) => {
   event.target.setAttribute("disabled",true);
   let userInput = document.querySelector("textarea").value;
