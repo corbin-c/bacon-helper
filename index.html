@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BACON Extractor</title>
+    <title>BACON Solver</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-textarea, input[type=button] {
-  display: block;
-}
-textarea, input {
+input {
   padding:1em;
-  margin:1em;
-}
-progress {
   margin:1em;
 }
 main {
   display: flex; 
-  align-items: flex-start;
+  align-items: flex-center;
   flex-flow: column;
+}
+main * {
+  margin: auto;
 }
 @media only screen and (min-width: 900px) {
   main {
@@ -30,14 +27,12 @@ main {
     <script defer type="module" src="../menu.js#nomenu"></script>
   </head>
   <body>
-    <header><h1>BACON Extractor</h1></header>
+    <header><h1>BACON Solver</h1></header>
     <main>
       <form>
-        <textarea placeholder="Saisir les identifiants recherchés (ISBN, ISSN)" rows="10" cols="30"></textarea>
-        <input id="OE" name="OE" type="checkbox" value="OE"><label for="OE">Privilégier les contenus d'<a href="https://www.openedition.org/" title="Lien vers le portail OpenEdition">OpenEdition</a></label>
+        <input type="text" placeholder="Identifiant (ISBN, ISSN)" id="user_search">
         <input id="validate" type="button" value="Valider">
       </form>
-      <progress max="1" value="0"></progress>
       <script type="module">
 import { baconIdToKbart } from "./bacon.js"
 
@@ -53,29 +48,15 @@ function output(filename, data, type) {
 
 document.querySelector("#validate").addEventListener("click", async (event) => {
   event.target.setAttribute("disabled",true);
-  let userInput = document.querySelector("textarea").value;
-  let progress = document.querySelector("progress");
-  let openedition = (document.querySelector("#OE").checked+0);
-  userInput = userInput.split(/,|;|\n/);
-  progress.setAttribute("max",userInput.length);
-  let updateProgress = (value) => progress.setAttribute("value",value);
-  let kbart = await baconIdToKbart(userInput,updateProgress,openedition);
+  let userInput = document.querySelector("#user_search").value;
+  userInput = [userInput.split(/,|;|\n/)[0]];
+  let kbart = await baconIdToKbart(userInput);
   event.target.removeAttribute("disabled");
-  document.querySelector("textarea").value = "";
-  if (kbart.errors.length == progress.value) {
+  document.querySelector("#user_search").value = "";
+  if (kbart.errors.length == 1) {
     alert("Pas de résultat :(");
   } else {
-    output(
-      "bacon_data.tsv",
-      kbart.kbart_lines.join("\n"),
-      "text/tab-separated-values");
-  }
-  if (kbart.errors.length > 0) {
-    let errors_log = (document.querySelector("pre")
-    || document.createElement("pre"));
-    kbart.errors = "Identifiants non trouvés:\n"+kbart.errors.join("\n");
-    errors_log.innerText = kbart.errors;
-    document.querySelector("main").append(errors_log);
+    document.location.href = kbart.kbart_lines[1].split("\t")[9];
   }
 });
       </script>
