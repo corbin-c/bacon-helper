@@ -9,13 +9,11 @@ created and maintained by the [ABES](http://www.abes.fr). The user is aked for
 an ID (ISSN, ISBN) and gets redirected to the resource URL, extracted from
 BACON. Free access is served first.
 
-Disclaimer: The BACON data is released under CC0 licence. I don't own the data,
+This tool relies on the great [webservices provided by the ABES](http://documentation.abes.fr/aidebacon/index.html#ManuelBacon_1).
+
+Disclaimer: The BACON data is released under CC0 licence. I don't own it,
 neither am I related to the ABES. This program is not developed neither
 maintained by the ABES.
-
-This BACON utility relies on the [webservices provided by the ABES](http://documentation.abes.fr/aidebacon/index.html#ManuelBacon_1).
-User submits a list of IDs (ISSN & ISBN) and automatically retrieves the
-associated KBART data.
 
 **/!\ If various sources are found for an ID, the helper will prioritize the one
 offering Open Access (ie F access type)**
@@ -23,7 +21,7 @@ offering Open Access (ie F access type)**
 ## Using the helper in another context
 
 The JS module called in the web tool can be used for other purposes: it is a
-simple BACON webservice wrapper for javascript.
+simple BACON webservice wrapper for javascript, shipped in an ES module.
 
 It can be imported with:
 
@@ -32,11 +30,11 @@ import { baconIdToKbart } from "https://corbin-c.github.io/bacon-helper/bacon.js
 ```
 
 Then, the baconIdToKbart() async function is available. It takes two mandatory
-parameters: an array of identifiers and a callback function for showing
+parameters: an array of identifiers and a callback function for monitoring
 progress.
 
 ```javascript
-  let kbart = await baconIdToKbart(id_array,updateProgress);
+  let kbart = await baconIdToKbart(id_array,[updateProgress]);
 ```
 
 The resulting kbart object contains two arrays, one being the errors (ie
