@@ -12,6 +12,6 @@ This BACON utility relies on the webservices provided by ABES. It allows to user
 to submit a list of IDs (ISSN & ISBN) and to automatically retrieve the
 associated [KBART](https://www.niso.org/standards-committees/kbart) data.
 
-Additionnally, a little checkbox allows to user to select [OpenEdition](https://www.openedition.org)
+Additionnally, a little checkbox allows the user to select [OpenEdition](https://www.openedition.org)
 data in priority (if any) to support Open Science and easily gain access to free
 content!
