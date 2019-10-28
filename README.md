@@ -15,3 +15,27 @@ associated [KBART](https://www.niso.org/standards-committees/kbart) data.
 Additionnally, a little checkbox allows users to select [OpenEdition](https://www.openedition.org)
 data in priority (if any) to support Open Science and easily gain access to free
 content!
+
+## Using the helper in another context
+
+The JS module called in the web tool can be used for other purposes: it is a
+simple BACON webservice wrapper for javascript.
+
+It can be imported with:
+
+```javascript
+import { baconIdToKbart } from "https://corbin-c.github.io/bacon-helper/bacon.js"
+```
+
+Then, the baconIdToKbart() function is available. It takes two parameters: an
+array of identifiers and a callback function for showing progress.
+The function is async, it can be used this way:
+
+```javascript
+  let kbart = await baconIdToKbart(id_array,updateProgress);
+```
+
+The resulting kbart object contains two arrays, one being the errors (ie
+identifiers which couldn't be resolved) the other being the kbart file lines.
+The first line is always returned, even if there are no results. It's the usual
+Kbart headers.
