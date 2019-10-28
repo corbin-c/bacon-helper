@@ -49,10 +49,11 @@ document.querySelector("#validate").addEventListener("click", async (event) => {
   event.target.setAttribute("disabled",true);
   let userInput = document.querySelector("textarea").value;
   let progress = document.querySelector("progress");
+  let openedition = (document.querySelector("#OE").checked+0);
   userInput = userInput.split(/,|;|\n/);
   progress.setAttribute("max",userInput.length);
   let updateProgress = (value) => progress.setAttribute("value",value);
-  let kbart = await baconIdToKbart(userInput,updateProgress);
+  let kbart = await baconIdToKbart(userInput,updateProgress,openedition);
   event.target.removeAttribute("disabled");
   document.querySelector("textarea").value = "";
   if (kbart.errors.length == progress.value) {

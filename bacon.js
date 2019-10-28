@@ -2,7 +2,7 @@ const ID2KBART = "https://bacon.abes.fr/id2kbart/";
 const PKG2KBART = "https://bacon.abes.fr/package2kbart/";
 const KBART_HEAD = '"publication_title"	"print_identifier"	"online_identifier"	"date_first_issue_online"	"num_first_vol_online"	"num_first_issue_online"	"date_last_issue_online"	"num_last_vol_online"	"num_last_issue_online"	"title_url"	"first_author"	"title_id"	"embargo_info"	"coverage_depth"	"notes"	"publisher_name"	"publication_type"	"date_monograph_published_print"	"date_monograph_published_online"	"monograph_volume"	"monograph_edition"	"first_editor"	"parent_publication_title_id"	"preceding_publication_title_id"	"access_type"';
 
-async function baconIdToKbart(id_list,progress_callback) {
+async function baconIdToKbart(id_list,progress_callback,oe=0) {
   let progress_count = 0;
   let errors = [];
   let kbart_lines = [];
@@ -25,10 +25,12 @@ async function baconIdToKbart(id_list,progress_callback) {
       id.provider = id.provider.filter(e => (!Array.isArray(e.kbart)));
       id.provider = id.provider.sort((a,b) =>
         a.kbart.access_type.localeCompare(b.kbart.access_type));
-      if (document.querySelector("#OE").checked) {
+      if (oe == 1) {
         id.provider = id.provider.sort((a,b) => {
             return (a.name == "OPENEDITION") ? -1:1;
           });
+      } else if (oe == 2) {
+        id.provider = id.provider.filter((a) => (a.name == "OPENEDITION"));
       }
       let kbart = "";
       KBART_HEAD.split("\t").map(e => {
