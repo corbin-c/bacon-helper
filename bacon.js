@@ -2,27 +2,12 @@ const ID2KBART = "https://bacon.abes.fr/id2kbart/";
 const PKG2KBART = "https://bacon.abes.fr/package2kbart/";
 const KBART_HEAD = '"publication_title"	"print_identifier"	"online_identifier"	"date_first_issue_online"	"num_first_vol_online"	"num_first_issue_online"	"date_last_issue_online"	"num_last_vol_online"	"num_last_issue_online"	"title_url"	"first_author"	"title_id"	"embargo_info"	"coverage_depth"	"notes"	"publisher_name"	"publication_type"	"date_monograph_published_print"	"date_monograph_published_online"	"monograph_volume"	"monograph_edition"	"first_editor"	"parent_publication_title_id"	"preceding_publication_title_id"	"access_type"';
 
-function output(filename, data, type) {
-  var a = window.document.createElement('a');
-  a.setAttribute("target","_blank");
-  a.href = window.URL.createObjectURL(new Blob([data], {type: type}));
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-document.querySelector("#validate").addEventListener("click", async (event) => {
-  event.target.setAttribute("disabled",true);
-  let userInput = document.querySelector("textarea").value;
-  let progress = document.querySelector("progress");
+async function baconIdToKbart(id_list,progress_callback) {
   let progress_count = 0;
   let errors = [];
   let kbart_lines = [];
-  userInput = userInput.split(/,|;|\n/);
-  progress.setAttribute("max",userInput.length);
-  userInput = userInput.filter(e => ((typeof e !== "undefined") && (e != "")));
-  userInput = await Promise.all(userInput.map(async (id) => {
+  id_list = id_list.filter(e => ((typeof e !== "undefined") && (e != "")));
+  id_list = await Promise.all(id_list.map(async (id) => {
     id = await fetch(ID2KBART+id+".json");
     id = await id.json();
     id = id.query;
@@ -57,21 +42,11 @@ document.querySelector("#validate").addEventListener("click", async (event) => {
       console.warn("not found: "+id.id);
     }
     progress_count++;
-    progress.setAttribute("value",progress_count);
+    if (typeof progress_callback === "function") {
+      progress_callback(progress_count);
+    }
   }));
   kbart_lines.unshift(KBART_HEAD);
-  event.target.removeAttribute("disabled");
-  document.querySelector("textarea").value = "";
-  if (errors.length == progress_count) {
-    alert("Pas de résultat :(");
-  } else {
-    output("bacon_data.tsv",kbart_lines.join("\n"),"text/tab-separated-values");
-  }
-  if (errors.length > 0) {
-    let errors_log = (document.querySelector("pre")
-    || document.createElement("pre"));
-    errors = "Identifiants non trouvés:\n"+errors.join("\n");
-    errors_log.innerText = errors;
-    document.querySelector("main").append(errors_log);
-  }
-});
+  return {errors,kbart_lines};
+};
+export { baconIdToKbart };

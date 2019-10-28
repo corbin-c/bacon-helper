@@ -32,7 +32,46 @@ main {
         <input id="validate" type="button" value="Valider">
       </form>
       <progress max="1" value="0"></progress>
-      <script type="module" src="bacon.js"></script>
+      <script type="module">
+import { baconIdToKbart } from "./bacon.js"
+
+function output(filename, data, type) {
+  var a = window.document.createElement('a');
+  a.setAttribute("target","_blank");
+  a.href = window.URL.createObjectURL(new Blob([data], {type: type}));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+document.querySelector("#validate").addEventListener("click", async (event) => {
+  event.target.setAttribute("disabled",true);
+  let userInput = document.querySelector("textarea").value;
+  let progress = document.querySelector("progress");
+  userInput = userInput.split(/,|;|\n/);
+  progress.setAttribute("max",userInput.length);
+  let updateProgress = (value) => progress.setAttribute("value",value);
+  let kbart = await baconIdToKbart(userInput,updateProgress);
+  event.target.removeAttribute("disabled");
+  document.querySelector("textarea").value = "";
+  if (kbart.errors.length == progress.value) {
+    alert("Pas de résultat :(");
+  } else {
+    output(
+      "bacon_data.tsv",
+      kbart.kbart_lines.join("\n"),
+      "text/tab-separated-values");
+  }
+  if (kbart.errors.length > 0) {
+    let errors_log = (document.querySelector("pre")
+    || document.createElement("pre"));
+    kbart.errors = "Identifiants non trouvés:\n"+kbart.errors.join("\n");
+    errors_log.innerText = kbart.errors;
+    document.querySelector("main").append(errors_log);
+  }
+});
+      </script>
     </main>
     <footer>
     </footer>
