@@ -11,6 +11,7 @@ async function baconIdToKbart(id_list,progress_callback,oe=0) {
     id = await id.json();
     id = id.query;
     try {
+      id.provider = Array.isArray(id.provider)?id.provider:[id.provider];
       id.provider.map(e => {
         if (Array.isArray(e.kbart)) {
           e.kbart.map(k => {
