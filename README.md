@@ -29,8 +29,8 @@ It can be imported with:
 import { baconIdToKbart } from "https://corbin-c.github.io/bacon-helper/bacon.js"
 ```
 
-Then, the baconIdToKbart() async function is available. It takes two mandatory
-parameters: an array of identifiers and a callback function for monitoring
+Then, the baconIdToKbart() async function is available. It takes two parameters:
+an array of identifiers (mandatory) and a callback function for monitoring
 progress.
 
 ```javascript
